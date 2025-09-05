@@ -1,4 +1,5 @@
-﻿using DPX.ScriptableObjects;
+﻿using DPX.InputSystem;
+using DPX.ScriptableObjects;
 using UnityEngine;
 
 namespace DPX.Player
@@ -7,15 +8,18 @@ namespace DPX.Player
     {
         private PlayerView player;
         private CharacterController controller;
+        private InputHandler inputs;
         private PlayerSO playerData;
 
-        private float hSpeed;
-        private float vSpeed;
+        private Vector3 dir;
+        private float currentVelocity;
+        private float velocity;
 
         public PlayerController(PlayerView player, PlayerSO playerSO)
         {
             this.player = player;
             playerData = playerSO;
+            inputs = new InputHandler();
         }
 
         public void StartPlayer()
@@ -25,15 +29,45 @@ namespace DPX.Player
 
         public void UpdatePlayer()
         {
-            hSpeed = Input.GetAxisRaw("Horizontal");
-            vSpeed = Input.GetAxisRaw("Vertical");
+            inputs.HandleInput();
 
-            Vector3 moveX = player.transform.right * hSpeed * playerData.MoveSpeed * Time.deltaTime;
-            Vector3 moveZ = player.transform.forward * vSpeed * playerData.MoveSpeed * Time.deltaTime;
+            PlayerGravity();
+            PlayerRotation();
+            PlayerMovement();
+        }
 
-            Vector3 move = moveX + moveZ;
+        private void PlayerMovement()
+        {
+            Vector3 horizontal = inputs.MovementInput * playerData.MoveSpeed;
+            Vector3 vertical = new Vector3(0, velocity, 0);
 
-            controller.Move(move);
+            Vector3 finalMove = (horizontal + vertical) * Time.deltaTime;
+
+            controller.Move(finalMove);
+        }
+
+
+        private void PlayerRotation()
+        {
+            if (dir.magnitude >= 0.1f)
+            {
+                float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+                float angle = Mathf.SmoothDampAngle(player.transform.eulerAngles.y, targetAngle, ref currentVelocity, playerData.SmoothRotation);
+                player.transform.rotation = Quaternion.Euler(0, angle, 0);
+            }
+        }
+
+        private void PlayerGravity()
+        {
+            if(controller.isGrounded && velocity < 0)
+            {
+                velocity = -1f;
+            }
+            else
+            {
+                velocity += playerData.Gravity * playerData.GravityMultiplyer * Time.deltaTime;
+            }
+            dir.y = velocity;
         }
     }
 }
