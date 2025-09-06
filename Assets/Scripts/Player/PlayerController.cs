@@ -1,4 +1,4 @@
-﻿using DPX.InputSystem;
+﻿using DPX.Inputs;
 using DPX.ScriptableObjects;
 using UnityEngine;
 
@@ -11,15 +11,16 @@ namespace DPX.Player
         private InputHandler inputs;
         private PlayerSO playerData;
 
-        private Vector3 dir;
+        private Vector3 velocity;
         private float currentVelocity;
-        private float velocity;
+        private Camera cam;
 
         public PlayerController(PlayerView player, PlayerSO playerSO)
         {
             this.player = player;
             playerData = playerSO;
             inputs = new InputHandler();
+            cam = Camera.main;
         }
 
         public void StartPlayer()
@@ -29,45 +30,52 @@ namespace DPX.Player
 
         public void UpdatePlayer()
         {
-            inputs.HandleInput();
+            inputs.UpdateInput();
 
-            PlayerGravity();
-            PlayerRotation();
-            PlayerMovement();
+            HandleMovement();
+            ApplyGravity();
         }
 
-        private void PlayerMovement()
+        private void HandleMovement()
         {
-            Vector3 horizontal = inputs.MovementInput * playerData.MoveSpeed;
-            Vector3 vertical = new Vector3(0, velocity, 0);
+            Quaternion yawRotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
+            Vector3 camForward = yawRotation * Vector3.forward;
+            Vector3 camRight = yawRotation * Vector3.right;
 
-            Vector3 finalMove = (horizontal + vertical) * Time.deltaTime;
+            Vector3 moveDir = (camForward * inputs.MoveInput.z + camRight * inputs.MoveInput.x).normalized;
 
-            controller.Move(finalMove);
-        }
+            float targetSpeed = inputs.SprintInput ? playerData.SprintSpeed : playerData.MoveSpeed;
 
+            Vector3 move = moveDir * targetSpeed;
+            controller.Move((move + Vector3.up * velocity.y) * Time.deltaTime);
 
-        private void PlayerRotation()
-        {
-            if (dir.magnitude >= 0.1f)
+            if (moveDir.sqrMagnitude > 0.01f)
             {
-                float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-                float angle = Mathf.SmoothDampAngle(player.transform.eulerAngles.y, targetAngle, ref currentVelocity, playerData.SmoothRotation);
-                player.transform.rotation = Quaternion.Euler(0, angle, 0);
+                HandleRotation(moveDir);
             }
         }
 
-        private void PlayerGravity()
+        private void HandleRotation(Vector3 moveDir)
         {
-            if(controller.isGrounded && velocity < 0)
-            {
-                velocity = -1f;
-            }
+            if (moveDir.sqrMagnitude < 0.001f) return;
+
+            float targetAngle = Mathf.Atan2(moveDir.x, moveDir.z) * Mathf.Rad2Deg;
+            float angle = Mathf.SmoothDampAngle(
+                player.transform.eulerAngles.y,
+                targetAngle,
+                ref currentVelocity,
+                playerData.RotationSpeed
+            );
+
+            player.transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        }
+
+        private void ApplyGravity()
+        {
+            if (controller.isGrounded && velocity.y < 0)
+                velocity.y = -1f; 
             else
-            {
-                velocity += playerData.Gravity * playerData.GravityMultiplyer * Time.deltaTime;
-            }
-            dir.y = velocity;
+                velocity.y += playerData.Gravity * playerData.GravityMultiplyer * Time.deltaTime;
         }
     }
 }

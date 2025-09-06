@@ -270,7 +270,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTarget: {fileID: 2127637083}
-  smoothSpeed: 0.01
+  mouseSensitivity:
+    horizontal: 150
+    vertical: 150
+    invertH: 0
+    invertV: 0
+  cameraAngle:
+    min: 10
+    max: 20
+  cameraOffset: {x: 0, y: 3, z: -7}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

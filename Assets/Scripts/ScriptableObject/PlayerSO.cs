@@ -6,7 +6,8 @@ namespace DPX.ScriptableObjects
     public class PlayerSO : ScriptableObject
     {
         public float MoveSpeed;
-        public float SmoothRotation;
+        public float RotationSpeed;
+        public float SprintSpeed;
         public float Gravity;
         public float GravityMultiplyer;
     }
