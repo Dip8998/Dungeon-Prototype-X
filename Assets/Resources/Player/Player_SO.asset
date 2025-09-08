@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player_SO
   m_EditorClassIdentifier: 
   MoveSpeed: 10
-  RotationSpeed: 1
+  RotationSpeed: 10
   SprintSpeed: 20
   Gravity: -9.81
   GravityMultiplyer: 1

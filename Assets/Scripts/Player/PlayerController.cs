@@ -1,36 +1,56 @@
 ﻿using DPX.Inputs;
 using DPX.ScriptableObjects;
+using DPX.Weapons;
+using System.Collections.Generic;
 using UnityEngine;
+
+
 
 namespace DPX.Player
 {
     public class PlayerController
     {
-        private PlayerView player;
+        private readonly PlayerView player;
+        private readonly PlayerSO playerData;
+        private readonly InputHandler inputs = new InputHandler();
+
         private CharacterController controller;
-        private InputHandler inputs;
-        private PlayerSO playerData;
+
+        private Camera cam;
 
         private Vector3 velocity;
-        private float currentVelocity;
-        private Camera cam;
+
+        private readonly List<WeaponView> weapons = new List<WeaponView>();
+
+        private int currentWeaponIndex = -1;
 
         public PlayerController(PlayerView player, PlayerSO playerSO)
         {
             this.player = player;
+
             playerData = playerSO;
-            inputs = new InputHandler();
-            cam = Camera.main;
         }
 
         public void StartPlayer()
         {
-            controller = player.gameObject.GetComponent<CharacterController>();
+            controller = player.GetComponent<CharacterController>();
+            cam = Camera.main;
+            if (weapons.Count > 0)
+                EquipWeapon(0);
         }
 
         public void UpdatePlayer()
         {
             inputs.UpdateInput();
+
+            if (currentWeaponIndex >= 0)
+                weapons[currentWeaponIndex].UpdateWeapon();
+
+            if (inputs.SwitchWeaponInput)
+                CycleWeapon();
+
+            if (inputs.AttackInput && currentWeaponIndex >= 0)
+                weapons[currentWeaponIndex].Attack();
 
             HandleMovement();
             ApplyGravity();
@@ -38,44 +58,83 @@ namespace DPX.Player
 
         private void HandleMovement()
         {
-            Quaternion yawRotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
-            Vector3 camForward = yawRotation * Vector3.forward;
-            Vector3 camRight = yawRotation * Vector3.right;
+            Quaternion yaw = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f);
+            Vector3 camF = (yaw * Vector3.forward);
+            Vector3 camR = (yaw * Vector3.right);
+            Vector3 moveDir = (camF * inputs.MoveInput.z + camR * inputs.MoveInput.x).normalized;
 
-            Vector3 moveDir = (camForward * inputs.MoveInput.z + camRight * inputs.MoveInput.x).normalized;
+            float speed = inputs.SprintInput ? playerData.SprintSpeed : playerData.MoveSpeed;
+            Vector3 horizontal = moveDir * speed;
+            controller.Move((horizontal + Vector3.up * velocity.y) * Time.deltaTime);
 
-            float targetSpeed = inputs.SprintInput ? playerData.SprintSpeed : playerData.MoveSpeed;
-
-            Vector3 move = moveDir * targetSpeed;
-            controller.Move((move + Vector3.up * velocity.y) * Time.deltaTime);
-
-            if (moveDir.sqrMagnitude > 0.01f)
+            if (!RotateTowardsMouse() && moveDir.sqrMagnitude > 0.01f)
             {
-                HandleRotation(moveDir);
+                float targetAngle = Mathf.Atan2(moveDir.x, moveDir.z) * Mathf.Rad2Deg;
+                player.transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
             }
         }
 
-        private void HandleRotation(Vector3 moveDir)
+        private bool RotateTowardsMouse()
         {
-            if (moveDir.sqrMagnitude < 0.001f) return;
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            {
+                Vector3 target = hit.point;
+                Vector3 lookDir = target - player.transform.position;
+                lookDir.y = 0f;
 
-            float targetAngle = Mathf.Atan2(moveDir.x, moveDir.z) * Mathf.Rad2Deg;
-            float angle = Mathf.SmoothDampAngle(
-                player.transform.eulerAngles.y,
-                targetAngle,
-                ref currentVelocity,
-                playerData.RotationSpeed
-            );
-
-            player.transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                if (lookDir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                    player.transform.rotation = Quaternion.Slerp(
+                      player.transform.rotation,
+                      targetRot,
+                      Time.deltaTime * playerData.RotationSpeed
+                    );
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void ApplyGravity()
         {
-            if (controller.isGrounded && velocity.y < 0)
-                velocity.y = -1f; 
+            if (controller.isGrounded && velocity.y < 0f)
+                velocity.y = -1f;
             else
                 velocity.y += playerData.Gravity * playerData.GravityMultiplyer * Time.deltaTime;
+        }
+
+        public void AddWeapon(WeaponView w)
+        {
+            if (w == null || weapons.Contains(w)) return;
+
+            w.OnUnequip();
+            weapons.Add(w);
+            if (weapons.Count == 1)
+                EquipWeapon(0);
+
+        }
+
+        private void CycleWeapon()
+        {
+            if (weapons.Count <= 1) return;
+
+            int next = (currentWeaponIndex + 1) % weapons.Count;
+
+            EquipWeapon(next);
+        }
+
+        private void EquipWeapon(int index)
+        {
+            if (index < 0 || index >= weapons.Count) return;
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                if (i == index) weapons[i].OnEquip();
+
+                else weapons[i].OnUnequip();
+            }
+            currentWeaponIndex = index;
         }
     }
 }
