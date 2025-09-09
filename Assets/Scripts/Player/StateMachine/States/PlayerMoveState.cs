@@ -2,12 +2,12 @@
 
 namespace DPX.Player.StateMachine
 {
-    public class MoveState : IState
+    public class PlayerMoveState : IPlayerState
     {
         public PlayerController Owner {  get; set; }
         private PlayerStateMachine stateMachine;
 
-        public MoveState(PlayerStateMachine stateMachine) => this.stateMachine = stateMachine;
+        public PlayerMoveState(PlayerStateMachine stateMachine) => this.stateMachine = stateMachine;
 
         public void OnStateEnter() { }
 

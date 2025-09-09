@@ -1,3 +1,4 @@
+using DPX.Interfaces;
 using DPX.ScriptableObjects;
 using DPX.Weapons;
 using UnityEngine;

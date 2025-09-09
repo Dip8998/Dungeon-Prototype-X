@@ -2,7 +2,7 @@
 
 namespace DPX.Interfaces
 {
-    public interface IState
+    public interface IPlayerState
     {
         public PlayerController Owner { get; set; }
         public void OnStateEnter();

@@ -2,14 +2,17 @@
 
 namespace DPX.Player.StateMachine
 {
-    public class RotateState : IState
+    public class PlayerAttackState : IPlayerState
     {
         public PlayerController Owner { get; set; }
         private PlayerStateMachine stateMachine;
 
-        public RotateState(PlayerStateMachine stateMachine) => this.stateMachine = stateMachine;
+        public PlayerAttackState(PlayerStateMachine stateMachine) => this.stateMachine = stateMachine;
 
-        public void OnStateEnter() { }
+        public void OnStateEnter()
+        {
+            Owner.HandleAttack();
+        }
 
         public void Update()
         {
@@ -17,13 +20,9 @@ namespace DPX.Player.StateMachine
             {
                 stateMachine.ChangeState(PlayerState.MOVE);
             }
-            else if (Owner.Inputs.AttackInput)
+            else
             {
-                stateMachine.ChangeState(PlayerState.ATTACK);
-            }
-            else if (!Owner.RotateTowardsMouse())
-            {
-                stateMachine.ChangeState(PlayerState.ROTATE);
+                stateMachine.ChangeState(PlayerState.IDLE);
             }
         }
 

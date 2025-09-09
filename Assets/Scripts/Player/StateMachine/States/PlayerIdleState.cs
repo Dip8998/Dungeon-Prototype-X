@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace DPX.Player.StateMachine
 {
-    public class IdleState : IState
+    public class PlayerIdleState : IPlayerState
     {
         public PlayerController Owner {  get; set; }
         private PlayerStateMachine stateMachine;
 
-        public IdleState(PlayerStateMachine stateMachine) => this.stateMachine = stateMachine;
+        public PlayerIdleState(PlayerStateMachine stateMachine) => this.stateMachine = stateMachine;
 
         public void OnStateEnter() { }
 
