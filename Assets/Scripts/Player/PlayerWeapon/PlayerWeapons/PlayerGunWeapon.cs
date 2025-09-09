@@ -1,12 +1,12 @@
-﻿using UnityEngine;
+﻿using DPX.Main;
+using System.Collections;
+using UnityEngine;
 
 namespace DPX.Weapons
 {
     public class PlayerGunWeapon : PlayerWeaponView
     {
         [SerializeField] private Transform firePoint;
-        [SerializeField] private GameObject fire;
-        [SerializeField] private GameObject hitPoint;
 
         public override void Attack()
         {
@@ -15,27 +15,31 @@ namespace DPX.Weapons
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            Vector3 targetPoint;
+            GameObject muzzle = GameService.Instance.VFXService.GetObject("MuzzleFire");
+            muzzle.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
+            StartCoroutine(ReturnEffectToPoolAfterDelay(muzzle, "MuzzleFire", 1f));
 
             if (Physics.Raycast(ray, out hit, 100f))
             {
-                targetPoint = hit.point;
-
-                GameObject muzzle = Instantiate(fire, firePoint.position, firePoint.rotation, firePoint);
-                Destroy(muzzle, 1f);
-
-                GameObject impact = Instantiate(hitPoint, hit.point, Quaternion.LookRotation(hit.normal));
-                Destroy(impact, 2f);
+                GameObject impact = GameService.Instance.VFXService.GetObject("HitPoint");
+                impact.transform.SetPositionAndRotation(hit.point, Quaternion.LookRotation(hit.normal));
+                StartCoroutine(ReturnEffectToPoolAfterDelay(impact, "HitPoint", 2f));
 
                 firePoint.LookAt(hit.point);
             }
             else
             {
-                targetPoint = ray.GetPoint(100f);
+                Vector3 targetPoint = ray.GetPoint(100f);
                 firePoint.LookAt(targetPoint);
             }
 
             cooldownTimer = weaponData.cooldown;
+        }
+
+        private IEnumerator ReturnEffectToPoolAfterDelay(GameObject obj, string poolName, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            GameService.Instance.VFXService.ReturnObject(poolName, obj);
         }
     }
 }

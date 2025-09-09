@@ -653,6 +653,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerView: {fileID: 22479910}
   playerSO: {fileID: 11400000, guid: 077331da2eecc744190194e9703e70ef, type: 2}
+  firePrefab: {fileID: 110062, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+  hitPointPrefab: {fileID: 151174, guid: e3c9439885f011549a6460a1f4da82dc, type: 3}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
