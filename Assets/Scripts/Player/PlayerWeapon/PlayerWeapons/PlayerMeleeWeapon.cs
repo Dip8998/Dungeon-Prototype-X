@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace DPX.Weapons
 {
-    public class MeleeWeapon : WeaponView
+    public class PlayerMeleeWeapon : PlayerWeaponView
     {
         [SerializeField] private GameObject slashObject;
         private bool isAttacking;

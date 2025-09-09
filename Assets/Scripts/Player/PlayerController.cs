@@ -20,7 +20,7 @@ namespace DPX.Player
 
         private Vector3 velocity;
 
-        private readonly List<WeaponView> weapons = new List<WeaponView>();
+        private readonly List<PlayerWeaponView> weapons = new List<PlayerWeaponView>();
 
         private int currentWeaponIndex = -1;
 
@@ -105,7 +105,7 @@ namespace DPX.Player
                 velocity.y += playerData.Gravity * playerData.GravityMultiplyer * Time.deltaTime;
         }
 
-        public void AddWeapon(WeaponView w)
+        public void AddWeapon(PlayerWeaponView w)
         {
             if (w == null || weapons.Contains(w)) return;
 

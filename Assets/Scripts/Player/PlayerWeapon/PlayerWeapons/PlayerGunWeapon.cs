@@ -2,7 +2,7 @@
 
 namespace DPX.Weapons
 {
-    public class GunWeapon : WeaponView
+    public class PlayerGunWeapon : PlayerWeaponView
     {
         [SerializeField] private Transform firePoint;
         [SerializeField] private GameObject fire;

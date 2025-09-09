@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using DPX.Weapons;
 using DPX.Player;
+using DPX.Main;
 
 public class WeaponPickup : MonoBehaviour
 {
-    [SerializeField] private WeaponView weaponToUnlock;
+    [SerializeField] private PlayerWeaponView weaponToUnlock;
 
     private void Update()
     {
@@ -17,11 +18,14 @@ public class WeaponPickup : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            PlayerView playerView = other.GetComponent<PlayerView>();
-            if (playerView != null)
+            if (GameService.Instance != null && GameService.Instance.PlayerService != null)
             {
-                playerView.CollectWeapon(weaponToUnlock);
+                GameService.Instance.PlayerService.AddWeaponToPlayer(weaponToUnlock);
                 Destroy(gameObject);
+            }
+            else
+            {
+                Debug.LogError("GameService or PlayerService is not initialized yet!");
             }
         }
     }

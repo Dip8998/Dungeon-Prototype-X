@@ -6,23 +6,19 @@ namespace DPX.Player
 {
     public class PlayerView : MonoBehaviour
     {
-        [SerializeField] private PlayerSO playerData;
-        [SerializeField] private WeaponView[] startingWeapons;
+        //[SerializeField] private PlayerSO playerData;
+        //[SerializeField] private WeaponView[] startingWeapons;
 
         private PlayerController controller;
 
-        private void Awake()
+        public void SetController(PlayerController playerController)
         {
-            controller = new PlayerController(this, playerData);
-            foreach (var w in startingWeapons)
-                if (w) controller.AddWeapon(w);
+            this.controller = playerController;
+
+            //foreach (var w in startingWeapons)
+            //{
+            //    if (w) controller.AddWeapon(w);
+            //}
         }
-
-        private void Start() => controller.StartPlayer();
-
-        private void Update() => controller.UpdatePlayer();
-
-        public void CollectWeapon(WeaponView w) => controller.AddWeapon(w);
-
     }
 }

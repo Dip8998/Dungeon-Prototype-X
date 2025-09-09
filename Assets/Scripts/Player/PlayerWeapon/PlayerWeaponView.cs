@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DPX.Weapons
 {
-    public abstract class WeaponView : MonoBehaviour, IWeapon
+    public abstract class PlayerWeaponView : MonoBehaviour, IWeapon
     {
         [SerializeField] protected WeaponSO weaponData;
 
