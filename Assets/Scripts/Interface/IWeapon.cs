@@ -1,4 +1,4 @@
-﻿namespace DPX.Weapons
+﻿namespace DPX.Interfaces
 {
     public interface IWeapon
     {

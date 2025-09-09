@@ -1,4 +1,5 @@
 ﻿using DPX.Inputs;
+using DPX.Player.StateMachine;
 using DPX.ScriptableObjects;
 using DPX.Weapons;
 using System.Collections.Generic;
@@ -12,9 +13,10 @@ namespace DPX.Player
     {
         private readonly PlayerView player;
         private readonly PlayerSO playerData;
-        private readonly InputHandler inputs = new InputHandler();
+        private InputHandler inputs = new InputHandler();
 
         private CharacterController controller;
+        private PlayerStateMachine stateMachine;
 
         private Camera cam;
 
@@ -24,11 +26,15 @@ namespace DPX.Player
 
         private int currentWeaponIndex = -1;
 
+        public InputHandler Inputs => inputs;
+
         public PlayerController(PlayerView player, PlayerSO playerSO)
         {
             this.player = player;
 
             playerData = playerSO;
+
+            stateMachine = new PlayerStateMachine(this);
         }
 
         public void StartPlayer()
@@ -37,6 +43,7 @@ namespace DPX.Player
             cam = Camera.main;
             if (weapons.Count > 0)
                 EquipWeapon(0);
+            stateMachine.ChangeState(PlayerState.IDLE);
         }
 
         public void UpdatePlayer()
@@ -49,14 +56,12 @@ namespace DPX.Player
             if (inputs.SwitchWeaponInput)
                 CycleWeapon();
 
-            if (inputs.AttackInput && currentWeaponIndex >= 0)
-                weapons[currentWeaponIndex].Attack();
-
-            HandleMovement();
+            stateMachine.Update();
+            
             ApplyGravity();
         }
 
-        private void HandleMovement()
+        public void HandleMovement()
         {
             Quaternion yaw = Quaternion.Euler(0f, cam.transform.eulerAngles.y, 0f);
             Vector3 camF = (yaw * Vector3.forward);
@@ -74,7 +79,7 @@ namespace DPX.Player
             }
         }
 
-        private bool RotateTowardsMouse()
+        public bool RotateTowardsMouse()
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
@@ -95,6 +100,12 @@ namespace DPX.Player
                 }
             }
             return false;
+        }
+
+        public void HandleAttack()
+        {
+            if (currentWeaponIndex >= 0)
+                weapons[currentWeaponIndex].Attack();
         }
 
         private void ApplyGravity()
