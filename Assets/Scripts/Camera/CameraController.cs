@@ -17,8 +17,11 @@ namespace DPX.PlayerCamera
 
         private void ApplyCameraTransform()
         {
-            transform.position = playerTarget.position + cameraOffset;
-            transform.LookAt(playerTarget.position + Vector3.up * 1.5f);
+            if(playerTarget != null)
+            {
+                transform.position = playerTarget.position + cameraOffset;
+                transform.LookAt(playerTarget.position + Vector3.up * 1.5f);
+            }
         }
     }
 }

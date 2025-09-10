@@ -28,6 +28,8 @@ namespace DPX.Player
 
         public InputHandler Inputs => inputs;
 
+        public PlayerView Player => player;
+
         public PlayerController(PlayerView player, PlayerSO playerSO)
         {
             this.player = player;

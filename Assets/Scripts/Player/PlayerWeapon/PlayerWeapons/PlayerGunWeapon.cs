@@ -1,4 +1,5 @@
-﻿using DPX.Main;
+﻿using DPX.GameHealth;
+using DPX.Main;
 using System.Collections;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace DPX.Weapons
     public class PlayerGunWeapon : PlayerWeaponView
     {
         [SerializeField] private Transform firePoint;
+        [SerializeField] private LayerMask attackLayer;
 
         public override void Attack()
         {
@@ -19,8 +21,14 @@ namespace DPX.Weapons
             muzzle.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
             StartCoroutine(ReturnEffectToPoolAfterDelay(muzzle, "MuzzleFire", 1f));
 
-            if (Physics.Raycast(ray, out hit, 100f))
+            if (Physics.Raycast(ray, out hit, 100f, attackLayer))
             {
+                Health targetHealth = hit.collider.GetComponent<Health>();
+                if (targetHealth != null)
+                {
+                    targetHealth.TakeDamage(10f);
+                }
+
                 GameObject impact = GameService.Instance.VFXService.GetObject("HitPoint");
                 impact.transform.SetPositionAndRotation(hit.point, Quaternion.LookRotation(hit.normal));
                 StartCoroutine(ReturnEffectToPoolAfterDelay(impact, "HitPoint", 2f));

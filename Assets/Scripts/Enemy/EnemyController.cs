@@ -1,4 +1,7 @@
 using DPX.Enemy.StateMachine;
+using DPX.GameHealth;
+using DPX.Main;
+using DPX.Player;
 using DPX.ScriptableObjects;
 using System.Collections.Generic;
 using UnityEngine;
@@ -80,7 +83,8 @@ namespace DPX.Enemy
 
         public void AttackPlayer()
         {
-
+            Health playerHealth = GameService.Instance.PlayerService.GetPlayerController().Player.GetComponent<Health>();
+            playerHealth.TakeDamage(10f);
         }
     }
 }

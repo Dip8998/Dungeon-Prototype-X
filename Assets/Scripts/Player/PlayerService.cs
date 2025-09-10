@@ -25,5 +25,6 @@ namespace DPX.Player
 
         public void AddWeaponToPlayer(PlayerWeaponView weapon) => playerController.AddWeapon(weapon);
 
+        public PlayerController GetPlayerController() => playerController;
     }
 }

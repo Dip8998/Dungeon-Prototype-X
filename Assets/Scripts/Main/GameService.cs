@@ -30,14 +30,28 @@ namespace DPX.Main
 
         private void Start()
         {
-            PlayerService.Init();
-            EnemyService.Init(playerView.transform, patrolPoints);
+            if(playerView != null)
+            {
+                PlayerService.Init();
+            }
+
+            if (enemyView != null)
+            {
+                EnemyService.Init(playerView.transform, patrolPoints);
+            }
         }
 
         private void Update()
         {
-            PlayerService.Update();
-            EnemyService.Update();
+            if (playerView != null)
+            {
+                PlayerService.Update();
+            }
+
+            if (enemyView != null)
+            {
+                EnemyService.Update();
+            }
         }
     }
 }
