@@ -1,4 +1,5 @@
-﻿using DPX.Inputs;
+﻿using DPX.GameStamina;
+using DPX.Inputs;
 using DPX.Player.StateMachine;
 using DPX.ScriptableObjects;
 using DPX.Weapons;
@@ -30,6 +31,8 @@ namespace DPX.Player
 
         public PlayerView Player => player;
 
+        private Stamina stamina;
+
         public PlayerController(PlayerView player, PlayerSO playerSO)
         {
             this.player = player;
@@ -43,6 +46,8 @@ namespace DPX.Player
         {
             controller = player.GetComponent<CharacterController>();
             cam = Camera.main;
+            stamina = player.GetComponent<Stamina>();
+
             if (weapons.Count > 0)
                 EquipWeapon(0);
             stateMachine.ChangeState(PlayerState.IDLE);
@@ -70,7 +75,18 @@ namespace DPX.Player
             Vector3 camR = (yaw * Vector3.right);
             Vector3 moveDir = (camF * inputs.MoveInput.z + camR * inputs.MoveInput.x).normalized;
 
-            float speed = inputs.SprintInput ? playerData.SprintSpeed : playerData.MoveSpeed;
+            float speed = playerData.MoveSpeed;
+
+            if (inputs.SprintInput && stamina != null)
+            {
+                stamina.DrainForSprint();
+
+                if (!stamina.IsExhausted)
+                {
+                    speed = playerData.SprintSpeed;
+                }
+            }
+
             Vector3 horizontal = moveDir * speed;
             controller.Move((horizontal + Vector3.up * velocity.y) * Time.deltaTime);
 
@@ -106,9 +122,25 @@ namespace DPX.Player
 
         public void HandleAttack()
         {
-            if (currentWeaponIndex >= 0)
-                weapons[currentWeaponIndex].Attack();
+            if (inputs.FireInput && currentWeaponIndex >= 0)
+            {
+                if (weapons[currentWeaponIndex] is PlayerGunWeapon)
+                {
+                    weapons[currentWeaponIndex].Attack();
+
+                    RotateTowardsMouse();
+                }
+                else if (weapons[currentWeaponIndex] is PlayerMeleeWeapon)
+                {
+                    if (inputs.MeleeInput)
+                    {
+                        weapons[currentWeaponIndex].Attack();
+                        RotateTowardsMouse();
+                    }
+                }
+            }
         }
+
 
         private void ApplyGravity()
         {

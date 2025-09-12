@@ -1,4 +1,5 @@
 using DPX.GameHealth;
+using DPX.GameStamina;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +9,11 @@ namespace DPX.Player
     {
         private PlayerController controller;
         private Health playerHealth;
+        private Stamina playerStamina;
 
         [Header("UI")]
-        [SerializeField] private Image healthFillImage; 
+        [SerializeField] private Image healthFillImage;
+        [SerializeField] private Image staminaFillImage;
 
         public void SetController(PlayerController playerController)
         {
@@ -23,6 +26,13 @@ namespace DPX.Player
                 playerHealth.OnHealthChanged += UpdateHealthBar;
                 UpdateHealthBar(playerHealth.CurrentHealth, playerHealth.MaxHealth); 
             }
+
+            playerStamina = GetComponent<Stamina>();
+            if (playerStamina != null)
+            {
+                playerStamina.OnStaminaChanged += UpdateStaminaBar;
+                UpdateStaminaBar(playerStamina.CurrentStamina, playerStamina.MaxStamina);
+            }
         }
 
         private void UpdateHealthBar(float current, float max)
@@ -31,6 +41,12 @@ namespace DPX.Player
             {
                 healthFillImage.fillAmount = current / max; 
             }
+        }
+
+        private void UpdateStaminaBar(float current, float max)
+        {
+            if (staminaFillImage != null)
+                staminaFillImage.fillAmount = current / max;
         }
 
         private void Die()

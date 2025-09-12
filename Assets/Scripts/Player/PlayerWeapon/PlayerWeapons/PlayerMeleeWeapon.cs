@@ -1,4 +1,7 @@
 ﻿using DPX.GameHealth;
+using DPX.Main;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DPX.Weapons
@@ -13,6 +16,7 @@ namespace DPX.Weapons
 
         private bool isAttacking;
         private float attackTimer;
+        private HashSet<Health> alreadyHit = new HashSet<Health>();
 
         private void Awake()
         {
@@ -46,33 +50,54 @@ namespace DPX.Weapons
             {
                 attackTimer -= Time.deltaTime;
                 if (attackTimer <= 0)
-                {
                     EndAttack();
-                }
 
                 if (slashObject)
                     slashObject.transform.Rotate(Vector3.up * weaponData.rotationSpeed * Time.deltaTime);
+
+                PerformAttack(); 
             }
         }
+
 
         private void EndAttack()
         {
             isAttacking = false;
+            alreadyHit.Clear(); 
             if (slashObject) slashObject.SetActive(false);
         }
 
         private void PerformAttack()
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, attackRange, enemyLayer);
+            Vector3 origin = slashObject ? slashObject.transform.position : transform.position;
+
+            Collider[] hits = Physics.OverlapSphere(origin, attackRange, enemyLayer);
 
             foreach (var hit in hits)
             {
                 var health = hit.GetComponent<Health>();
-                if (health != null)
+                if (health != null && !alreadyHit.Contains(health))
                 {
-                    health.TakeDamage(damage);
+                    Vector3 dir = (hit.transform.position - origin).normalized;
+                    health.TakeDamageWithKnockback(damage, dir, 10f);
+
+                    alreadyHit.Add(health);
+
+                    Vector3 hitPoint = hit.ClosestPoint(origin);
+                    Vector3 hitNormal = (hitPoint - origin).normalized;
+
+                    GameObject impact = GameService.Instance.VFXService.GetObject("HitPoint");
+                    impact.transform.SetPositionAndRotation(hitPoint, Quaternion.LookRotation(hitNormal));
+                    StartCoroutine(ReturnEffectToPoolAfterDelay(impact, "HitPoint", 2f));
                 }
             }
+        }
+
+
+        private IEnumerator ReturnEffectToPoolAfterDelay(GameObject obj, string poolName, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            GameService.Instance.VFXService.ReturnObject(poolName, obj);
         }
 
         private void OnDrawGizmosSelected()

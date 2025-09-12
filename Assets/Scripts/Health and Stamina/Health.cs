@@ -31,6 +31,17 @@ namespace DPX.GameHealth
             if (IsDead) Die();
         }
 
+        public void TakeDamageWithKnockback(float damage, Vector3 knockbackDir, float force)
+        {
+            TakeDamage(damage);
+
+            var knockback = GetComponent<IKnockbackReceiver>();
+            if (knockback != null)
+            {
+                knockback.ApplyKnockback(knockbackDir, force);
+            }
+        }
+
         private void Die()
         {
             OnDeath?.Invoke();

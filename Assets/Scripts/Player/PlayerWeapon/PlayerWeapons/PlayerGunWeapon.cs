@@ -24,10 +24,13 @@ namespace DPX.Weapons
             if (Physics.Raycast(ray, out hit, 100f, attackLayer))
             {
                 Health targetHealth = hit.collider.GetComponent<Health>();
+
                 if (targetHealth != null)
                 {
-                    targetHealth.TakeDamage(10f);
+                    Vector3 dir = (hit.transform.position - firePoint.position).normalized;
+                    targetHealth.TakeDamageWithKnockback(10f, dir, 8f);
                 }
+
 
                 GameObject impact = GameService.Instance.VFXService.GetObject("HitPoint");
                 impact.transform.SetPositionAndRotation(hit.point, Quaternion.LookRotation(hit.normal));

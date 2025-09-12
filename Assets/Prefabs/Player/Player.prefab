@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5880004962729003107}
   - component: {fileID: 5450147093953534855}
   - component: {fileID: 5054021214911835447}
+  - component: {fileID: 2601487173559339800}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -129,6 +130,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097d0367766eda74d8cc87cd48c50899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthFillImage: {fileID: 0}
+  staminaFillImage: {fileID: 0}
 --- !u!114 &5054021214911835447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +145,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+--- !u!114 &2601487173559339800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6041318682507375740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6e677ecadea872499f921529b421984, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxStamina: 100
+  regenRate: 5
+  sprintDrainRate: 20
 --- !u!1 &8824536656433098344
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,13 +354,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5246477422897639578}
     m_Modifications:
+    - target: {fileID: 1126559770513415562, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529074363205486312, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
+      propertyPath: attackRange
+      value: 2.3
+      objectReference: {fileID: 0}
     - target: {fileID: 2529074363205486312, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
       propertyPath: slashObject
       value: 
       objectReference: {fileID: 4706414079386739445}
+    - target: {fileID: 2529074363205486312, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
+      propertyPath: enemyLayer.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
     - target: {fileID: 3445955226528148486, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3445955226528148486, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5162534690270008895, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -391,6 +425,10 @@ PrefabInstance:
     - target: {fileID: 8007806733114976866, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8007806733114976866, guid: 978f5aa079b3db8489d9f771f942d76b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

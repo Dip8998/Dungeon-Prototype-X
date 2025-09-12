@@ -315,9 +315,9 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     startSize:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0.4
-      minScalar: 0.2
+      minScalar: 0.002
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -350,9 +350,9 @@ ParticleSystem:
         m_RotationOrder: 0
     startSizeY:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 0.4
-      minScalar: 0.2
+      minMaxState: 0
+      scalar: 0.005
+      minScalar: 0.002
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -385,9 +385,9 @@ ParticleSystem:
         m_RotationOrder: 0
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 0.4
-      minScalar: 0.2
+      minMaxState: 0
+      scalar: 0.005
+      minScalar: 0.002
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -527,7 +527,7 @@ ParticleSystem:
     gravitySource: 0
     maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
-    size3D: 1
+    size3D: 0
     rotation3D: 0
     gravityModifier:
       serializedVersion: 2
@@ -5107,9 +5107,9 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     startSize:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0.4
-      minScalar: 0.2
+      minScalar: 0.002
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5142,9 +5142,9 @@ ParticleSystem:
         m_RotationOrder: 0
     startSizeY:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 0.4
-      minScalar: 0.2
+      minMaxState: 0
+      scalar: 0.005
+      minScalar: 0.002
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5177,9 +5177,9 @@ ParticleSystem:
         m_RotationOrder: 0
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 0.4
-      minScalar: 0.2
+      minMaxState: 0
+      scalar: 0.005
+      minScalar: 0.002
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5319,7 +5319,7 @@ ParticleSystem:
     gravitySource: 0
     maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
-    size3D: 1
+    size3D: 0
     rotation3D: 0
     gravityModifier:
       serializedVersion: 2
@@ -9490,8 +9490,8 @@ ParticleSystemRenderer:
   m_VertexStreams: 0001030405
   m_UseCustomTrailVertexStreams: 0
   m_TrailVertexStreams: 00010304
-  m_Mesh: {fileID: 6461297695846733525, guid: 2bcf403d36c923f43901877dfe5d9768, type: 3}
-  m_Mesh1: {fileID: -5008381810204397873, guid: 2bcf403d36c923f43901877dfe5d9768, type: 3}
+  m_Mesh: {fileID: -5008381810204397873, guid: 2bcf403d36c923f43901877dfe5d9768, type: 3}
+  m_Mesh1: {fileID: 6461297695846733525, guid: 2bcf403d36c923f43901877dfe5d9768, type: 3}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MeshWeighting: 1

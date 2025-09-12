@@ -14,7 +14,6 @@ namespace DPX.Enemy
         public EnemySO EnemyData { get; private set; }
         public EnemyStateMachine StateMachine { get; private set; }
 
-        public CharacterController Controller { get; private set; }
 
         private Transform playerTransform;
 
@@ -30,7 +29,6 @@ namespace DPX.Enemy
 
         public void Init(Transform player, List<Transform> patrolPoints)
         {
-            Controller = EnemyView.GetComponent<CharacterController>();
             this.playerTransform = player;
             this.patrolPoints = patrolPoints;
             StateMachine.ChangeState(EnemyState.IDLE);
@@ -44,7 +42,7 @@ namespace DPX.Enemy
         public void MoveTo(Vector3 targetPosition)
         {
             Vector3 direction = (targetPosition - EnemyView.transform.position).normalized;
-            Controller.Move(direction * EnemyData.moveSpeed * Time.deltaTime);
+            EnemyView.Controller.Move(direction * EnemyData.moveSpeed * Time.deltaTime);
         }
 
         public void RotateTowards(Vector3 targetPosition)

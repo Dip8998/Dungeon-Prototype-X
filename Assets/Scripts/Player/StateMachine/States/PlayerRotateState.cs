@@ -17,7 +17,7 @@ namespace DPX.Player.StateMachine
             {
                 stateMachine.ChangeState(PlayerState.MOVE);
             }
-            else if (Owner.Inputs.AttackInput)
+            else if (Owner.Inputs.FireInput || Owner.Inputs.MeleeInput)
             {
                 stateMachine.ChangeState(PlayerState.ATTACK);
             }
