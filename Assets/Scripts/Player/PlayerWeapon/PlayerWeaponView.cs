@@ -7,9 +7,11 @@ namespace DPX.Weapons
     public abstract class PlayerWeaponView : MonoBehaviour, IWeapon
     {
         [SerializeField] protected WeaponSO weaponData;
+        [SerializeField] private WeaponType weaponType; 
 
         protected float cooldownTimer;
 
+        public WeaponType WeaponType => weaponType;
         public bool CanAttack => cooldownTimer <= 0f;
 
         public virtual void UpdateWeapon()

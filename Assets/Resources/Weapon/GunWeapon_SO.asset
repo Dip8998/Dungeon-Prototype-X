@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Gun
   icon: {fileID: 0}
-  type: 0
+  type: 1
   cooldown: 0.1
   attackDuration: 0.3
   rotationSpeed: 500

@@ -23,10 +23,6 @@ public class WeaponPickup : MonoBehaviour
                 GameService.Instance.PlayerService.AddWeaponToPlayer(weaponToUnlock);
                 Destroy(gameObject);
             }
-            else
-            {
-                Debug.LogError("GameService or PlayerService is not initialized yet!");
-            }
         }
     }
 }

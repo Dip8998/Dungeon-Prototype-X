@@ -1,5 +1,6 @@
 ﻿using DPX.GameStamina;
 using DPX.Inputs;
+using DPX.Main;
 using DPX.Player.StateMachine;
 using DPX.ScriptableObjects;
 using DPX.Weapons;
@@ -180,6 +181,9 @@ namespace DPX.Player
                 else weapons[i].OnUnequip();
             }
             currentWeaponIndex = index;
+
+            GameService.Instance.UIService.SetImageActive(true);
+            GameService.Instance.UIService.SetPlayerWeaponIcon(weapons[index].WeaponType);
         }
     }
 }

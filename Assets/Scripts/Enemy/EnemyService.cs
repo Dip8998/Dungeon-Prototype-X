@@ -1,4 +1,5 @@
-﻿using DPX.ScriptableObjects;
+﻿using DPX.Enemy.StateMachine;
+using DPX.ScriptableObjects;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,22 +7,42 @@ namespace DPX.Enemy
 {
     public class EnemyService
     {
-        private EnemyController enemyController;
+        private readonly List<EnemyController> enemyControllers = new List<EnemyController>();
 
-        public EnemyService(EnemyView enemyView, EnemySO enemyData)
+        public EnemyService() { }
+
+        public void RegisterEnemy(EnemyView enemyView, EnemySO enemyData)
         {
-            enemyController = new EnemyController(enemyView, enemyData);
-            enemyView.SetController(enemyController);
+            if (enemyView == null) return;
+
+            EnemyController controller = new EnemyController(enemyView, enemyData);
+            enemyView.SetController(controller);
+            enemyControllers.Add(controller);
         }
 
-        public void Init(Transform player, List<Transform> patrolPoints)
+        public void InitAll(Transform player, List<Transform> patrolPoints)
         {
-            enemyController.Init(player, patrolPoints);
+            foreach (var controller in enemyControllers)
+            {
+                if (controller?.EnemyView != null)
+                    controller.Init(player, patrolPoints);
+            }
         }
 
-        public void Update()
+        public void UpdateAll()
         {
-            enemyController.UpdateEnemy();
+            for (int i = enemyControllers.Count - 1; i >= 0; i--)
+            {
+                var controller = enemyControllers[i];
+
+                if (controller == null || controller.EnemyView == null)
+                {
+                    enemyControllers.RemoveAt(i);
+                    continue;
+                }
+
+                controller.UpdateEnemy();
+            }
         }
     }
 }

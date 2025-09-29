@@ -10,7 +10,7 @@ namespace DPX.Enemies.StateMachine
         private EnemyStateMachine stateMachine;
         private EnemyController owner;
         private Vector3 currentPatrolTarget;
-        private float patrolTolerance = 0.5f; 
+        private const float patrolTolerance = 0.5f;
 
         public EnemyIdleState(EnemyStateMachine stateMachine, EnemyController owner)
         {
@@ -20,12 +20,13 @@ namespace DPX.Enemies.StateMachine
 
         public void OnStateEnter()
         {
-            Debug.Log("Enemy: Entering Idle State (Patrolling)");
-            currentPatrolTarget = owner.GetNextPatrolPoint();
+            currentPatrolTarget = owner.GetCurrentPatrolPoint();
         }
 
         public void Update()
         {
+            if (owner == null || owner.EnemyView == null) return;
+
             float distanceToPlayer = Vector3.Distance(owner.EnemyView.transform.position, owner.GetPlayerPosition());
             if (distanceToPlayer <= owner.EnemyData.chaseDistance)
             {
@@ -33,7 +34,10 @@ namespace DPX.Enemies.StateMachine
                 return;
             }
 
-            float distanceToTarget = Vector3.Distance(owner.EnemyView.transform.position, currentPatrolTarget);
+            Vector3 flatEnemy = new Vector3(owner.EnemyView.transform.position.x, 0f, owner.EnemyView.transform.position.z);
+            Vector3 flatTarget = new Vector3(currentPatrolTarget.x, 0f, currentPatrolTarget.z);
+            float distanceToTarget = Vector3.Distance(flatEnemy, flatTarget);
+
             if (distanceToTarget > patrolTolerance)
             {
                 owner.RotateTowards(currentPatrolTarget);
@@ -41,13 +45,13 @@ namespace DPX.Enemies.StateMachine
             }
             else
             {
-                currentPatrolTarget = owner.GetNextPatrolPoint();
+                owner.AdvancePatrolPoint();
+                currentPatrolTarget = owner.GetCurrentPatrolPoint();
             }
         }
 
         public void OnStateExit()
         {
-            Debug.Log("Enemy: Exiting Idle State");
         }
     }
 }

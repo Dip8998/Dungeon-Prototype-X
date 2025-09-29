@@ -41,42 +41,58 @@ namespace DPX.Enemy
 
         public void MoveTo(Vector3 targetPosition)
         {
-            Vector3 direction = (targetPosition - EnemyView.transform.position).normalized;
-            EnemyView.Controller.Move(direction * EnemyData.moveSpeed * Time.deltaTime);
+            if (EnemyView == null || EnemyView.Controller == null) return;
+
+            Vector3 currentPos = EnemyView.transform.position;
+            Vector3 flatTarget = new Vector3(targetPosition.x, currentPos.y, targetPosition.z);
+
+            Vector3 delta = flatTarget - currentPos;
+            float dist = delta.magnitude;
+            if (dist < 0.001f) return;
+
+            Vector3 move = delta.normalized * EnemyData.moveSpeed * Time.deltaTime;
+            if (move.magnitude > dist) move = delta;
+
+            EnemyView.Controller.Move(move);
         }
 
         public void RotateTowards(Vector3 targetPosition)
         {
-            Vector3 direction = (targetPosition - EnemyView.transform.position).normalized;
-            direction.y = 0; 
-            if (direction != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                EnemyView.transform.rotation = Quaternion.Slerp(
-                    EnemyView.transform.rotation,
-                    targetRotation,
-                    EnemyData.rotationSpeed * Time.deltaTime
-                );
-            }
+            if (EnemyView == null) return;
+
+            Vector3 currentPos = EnemyView.transform.position;
+            Vector3 flatTarget = new Vector3(targetPosition.x, currentPos.y, targetPosition.z);
+
+            Vector3 direction = (flatTarget - currentPos);
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.0001f) return;
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
+            EnemyView.transform.rotation = Quaternion.Slerp(
+                EnemyView.transform.rotation,
+                targetRotation,
+                EnemyData.rotationSpeed * Time.deltaTime
+            );
         }
+
+        public Vector3 GetCurrentPatrolPoint()
+        {
+            if (patrolPoints == null || patrolPoints.Count == 0)
+                return EnemyView.transform.position;
+
+            return patrolPoints[currentPatrolIndex].position;
+        }
+
+        public void AdvancePatrolPoint()
+        {
+            if (patrolPoints == null || patrolPoints.Count == 0) return;
+            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
+        }
+
 
         public Vector3 GetPlayerPosition()
         {
             return playerTransform.position;
-        }
-
-        public Vector3 GetNextPatrolPoint()
-        {
-            if (patrolPoints == null || patrolPoints.Count == 0)
-            {
-                return EnemyView.transform.position;
-            }
-
-            Vector3 targetPoint = patrolPoints[currentPatrolIndex].position;
-
-            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
-
-            return targetPoint;
         }
 
         public void AttackPlayer()
@@ -84,5 +100,6 @@ namespace DPX.Enemy
             Health playerHealth = GameService.Instance.PlayerService.GetPlayerController().Player.GetComponent<Health>();
             playerHealth.TakeDamage(10f);
         }
+
     }
 }
